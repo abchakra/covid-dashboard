@@ -1,15 +1,17 @@
 import React from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 import MainLayout from './pages/layout/MainLayout';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Switch>
+    <Provider store={store}>
+      <Router>
         <MainLayout />
-      </Switch>
-    </BrowserRouter>
+      </Router>
+    </Provider>
   );
 };
 

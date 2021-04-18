@@ -1,0 +1,25 @@
+.custom-tooltip {
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 2px solid #c3c3c3;
+  border-radius: 10px;
+  /* span {
+    font-weight: bold;
+  } */
+}
+.cov-infinite-container {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  overflow: auto;
+  padding: 8px 24px;
+  height: 700px;
+}
+.cov-loading-container {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+}
+[data-theme='dark'] .demo-infinite-container {
+  border: 1px solid #303030;
+}
