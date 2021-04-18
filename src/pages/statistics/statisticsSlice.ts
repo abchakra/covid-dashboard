@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { Country, CountryData, CountryInfo } from './Country';
-import { fetchCount } from './statisticsAPI';
+import { Country, CountryData, CountryInfo, Summary } from './Country';
 
 export interface StatisticsState {
   value: number;
   status: 'idle' | 'loading' | 'failed';
   countryData: Country[];
   countryInfo: CountryInfo[];
+  dailySummary: Summary | undefined;
 }
 
 const initialState: StatisticsState = {
@@ -15,7 +15,17 @@ const initialState: StatisticsState = {
   status: 'idle',
   countryData: [],
   countryInfo: [],
+  dailySummary: undefined,
 };
+
+export const fetchSummary = createAsyncThunk(
+  'statistics/fetchSummary',
+  // Declare the type your function argument here:
+  async () => {
+    const response = await fetch(`https://api.covid19api.com/summary`);
+    return (await response.json()) as Summary;
+  }
+);
 
 export const fetchByCountry = createAsyncThunk(
   'statistics/fetchByCountry',
@@ -70,7 +80,11 @@ export const statisticsSlice = createSlice({
       .addCase(fetchCountries.fulfilled, (state, action) => {
         state.status = 'idle';
         // console.log('idle', action.payload.length);
-        state.countryData = action.payload;
+        let data = action.payload;
+        data = data.sort((a, b) => a.Slug.localeCompare(b.Slug));
+        // console.log('fetchByCountry :', data);
+
+        state.countryData = data;
       })
       .addCase(fetchByCountry.fulfilled, (state, action) => {
         state.status = 'idle';
@@ -80,7 +94,7 @@ export const statisticsSlice = createSlice({
           (a: CountryInfo) =>
             a.Active !== 0 && a.Recovered !== 0 && a.Deaths !== 0
         );
-        // console.log('fetchByCountry :', data);
+
         state.countryInfo = data;
       });
   },
@@ -95,6 +109,8 @@ export const selectCountries = (state: RootState) =>
   state.statistics.countryData;
 export const selectCountryInfo = (state: RootState) =>
   state.statistics.countryInfo;
+export const selectSummary = (state: RootState) =>
+  state.statistics.dailySummary;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

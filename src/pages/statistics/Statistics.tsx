@@ -5,6 +5,7 @@ import CountryChart from './CountryChart';
 import {
   fetchByCountry,
   fetchCountries,
+  fetchSummary,
   selectCountries,
   selectCountryInfo,
 } from './statisticsSlice';

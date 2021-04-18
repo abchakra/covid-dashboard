@@ -30,3 +30,31 @@ export interface CountryInfo {
   Province: string;
   Recovered: number;
 }
+
+export interface Summary {
+  Global: GlobalSummary;
+  Countries: CountrySummary[];
+  Date: string;
+}
+
+export interface CountrySummary {
+  Country: string;
+  CountryCode: string;
+  Slug: string;
+  NewConfirmed: number;
+  TotalConfirmed: number;
+  NewDeaths: number;
+  TotalDeaths: number;
+  NewRecovered: number;
+  TotalRecovered: number;
+  Date: string;
+}
+
+export interface GlobalSummary {
+  NewConfirmed: number;
+  TotalConfirmed: number;
+  NewDeaths: number;
+  TotalDeaths: number;
+  NewRecovered: number;
+  TotalRecovered: number;
+}
