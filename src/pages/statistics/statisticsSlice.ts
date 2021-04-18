@@ -1,6 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { Country, CountryData, CountryInfo, Summary } from './Country';
+import {
+  Country,
+  CountryData,
+  CountrySummary,
+  CountryInfo,
+  Summary,
+} from './Country';
 
 export interface StatisticsState {
   value: number;
@@ -96,6 +102,17 @@ export const statisticsSlice = createSlice({
         );
 
         state.countryInfo = data;
+      })
+      .addCase(fetchSummary.fulfilled, (state, action) => {
+        state.status = 'idle';
+
+        let data: Summary = action.payload;
+        // data = data.filter(
+        //   (a: CountryInfo) =>
+        //     a.Active !== 0 && a.Recovered !== 0 && a.Deaths !== 0
+        // );
+
+        state.dailySummary = data;
       });
   },
 });

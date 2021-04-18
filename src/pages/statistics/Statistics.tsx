@@ -1,25 +1,29 @@
-import { Button, Col, List, Row } from 'antd';
+import { Button, Card, Col, List, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CountryChart from './CountryChart';
+import './Statistics.css';
 import {
   fetchByCountry,
   fetchCountries,
   fetchSummary,
+  selectSummary,
   selectCountries,
   selectCountryInfo,
 } from './statisticsSlice';
 import InfiniteScroll from 'react-infinite-scroller';
+import { GlobalSummary } from './Country';
 
 const Statistics = () => {
   const countryData = useAppSelector(selectCountries);
+  const summary = useAppSelector(selectSummary);
   const countryInfo = useAppSelector(selectCountryInfo);
   const dispatch = useAppDispatch();
 
   const [country, setCountry] = useState('');
 
   useEffect(() => {
-    dispatch(fetchCountries());
+    dispatch(fetchSummary());
   }, []);
 
   const handleCountry = (id: string) => {
@@ -30,45 +34,112 @@ const Statistics = () => {
 
   const handleInfiniteOnLoad = () => {};
 
+  const style = { background: '#0092ff', padding: '8px 0' };
+  const summaryCards = () => {
+    Object.entries(summary!.Global).map(([key, value]) => {
+      console.log(key, value);
+      return (
+        <Col className='gutter-row' span={6}>
+          <div style={style}>
+            <Card title={key} bordered={false} style={{ width: 300 }}>
+              <p>{value}</p>
+            </Card>
+          </div>
+        </Col>
+      );
+    });
+
+    return <div></div>;
+  };
+
   return (
     <div>
-      <div>Statistics</div>
+      <h2>Statistics</h2>
+      {summary ? (
+        // (
+        //   <Row gutter={[8, 8]} justify='start'>
+        //     <Col className='gutter-row' span={4}>
+        //       <div style={style}>
+        //         <Card
+        //           title='NewConfirmed'
+        //           bordered={false}
+        //           style={{ width: '100%' }}
+        //         >
+        //           <h2>{summary.Global.NewConfirmed}</h2>
+        //         </Card>
+        //       </div>
+        //     </Col>
+        //     <Col className='gutter-row' span={4}>
+        //       <div style={style}>
+        //         <Card
+        //           title='NewConfirmed'
+        //           bordered={false}
+        //           style={{ width: '100%' }}
+        //         >
+        //           <h2>{summary.Global.NewConfirmed}</h2>
+        //         </Card>
+        //       </div>
+        //     </Col>
+        //   </Row>
+        // ) :
+
+        <Row gutter={[8, 8]} justify='start'>
+          {Object.entries(summary.Global).map(([key, value]) => {
+            return (
+              <Col className='gutter-row' span={4} key={key}>
+                <div style={style}>
+                  <Card title={key} bordered={false} style={{ width: '100%' }}>
+                    <h2>{value}</h2>
+                  </Card>
+                </div>
+              </Col>
+            );
+          })}
+        </Row>
+      ) : (
+        <div>Summary loading....</div>
+      )}
+
       <Row>
         <Col span={6}>
-          {countryData.length > 0 ? (
-            <div className='cov-infinite-container'>
-              <InfiniteScroll
-                initialLoad={false}
-                pageStart={0}
-                loadMore={handleInfiniteOnLoad}
-                hasMore={false}
-                useWindow={false}
-              >
-                <List
-                  size='small'
-                  // header={<div>Header</div>}
-                  // footer={<div>Footer</div>}
-                  bordered
-                  dataSource={countryData}
-                  renderItem={(item) => (
-                    <List.Item
-                      key={item.Slug}
-                      // extra={item.ISO2}
-                      actions={[
-                        <Button
-                          // type='danger'
-                          size='small'
-                          onClick={() => handleCountry(item.Slug)}
+          {summary && summary.Countries.length > 0 ? (
+            <div>
+              <Row>
+                <div className='cov-infinite-container'>
+                  <InfiniteScroll
+                    initialLoad={false}
+                    pageStart={0}
+                    loadMore={handleInfiniteOnLoad}
+                    hasMore={false}
+                    useWindow={false}
+                  >
+                    <List
+                      size='small'
+                      // header={<div>Header</div>}
+                      // footer={<div>Footer</div>}
+                      bordered
+                      dataSource={summary.Countries}
+                      renderItem={(item) => (
+                        <List.Item
+                          key={item.Slug}
+                          // extra={item.ISO2}
+                          actions={[
+                            <Button
+                              // type='danger'
+                              size='small'
+                              onClick={() => handleCountry(item.Slug)}
+                            >
+                              Show
+                            </Button>,
+                          ]}
                         >
-                          Show
-                        </Button>,
-                      ]}
-                    >
-                      {item.Country}
-                    </List.Item>
-                  )}
-                />
-              </InfiniteScroll>
+                          {item.Country}
+                        </List.Item>
+                      )}
+                    />
+                  </InfiniteScroll>
+                </div>
+              </Row>
             </div>
           ) : (
             'Loading.............'
